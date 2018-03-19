@@ -1,6 +1,4 @@
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time
 
 #see https://apps.timwhitlock.info/emoji/tables/unicode for a list of every emoji
 
@@ -41,8 +39,43 @@ class EmojiFormat:
 
     def addEmoji(self, keyword):
 
-        if keyword == "thumbs-up":
+        if keyword == "red_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, red_heart)
+        elif keyword == "blue_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, blue_heart)
+        elif keyword == "green_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, green_heart)
+        elif keyword == "yellow_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, yellow_heart)
+        elif keyword == "purple_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, purple_heart)
+        elif keyword == "orange_heart":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, orange_heart)
+        elif keyword == "heart_exclamation":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, heart_exclamation)
+        elif keyword == "smiling_face":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, smiling_face)
+        elif keyword == "heart_face":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, heart_face)
+        elif keyword == "hug_face":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, hug_face)
+        elif keyword == "okay_hand":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, okay_hand)
+        elif keyword == "thumbs_up":
             self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, thumbs_up)
+        elif keyword == "left_fist":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, left_fist)
+        elif keyword == "fire":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, fire)
+        elif keyword == "top_sign":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, top_sign)
+        elif keyword == "cat":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, cat)
+        elif keyword == "eyes":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, eyes)
+        elif keyword == "crown":
+            self.driver.execute_script(JS_ADD_TEXT_TO_INPUT, self.elem, crown)
+
 
     def detectEmoji(self):
         message = self.message
@@ -54,5 +87,4 @@ class EmojiFormat:
                 self.addEmoji(content[2:])
             else:
                 self.elem.send_keys(content)
-
         self.elem.send_keys(Keys.SPACE)

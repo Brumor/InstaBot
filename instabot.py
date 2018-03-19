@@ -94,7 +94,7 @@ class InstaBot(object):
     def getUsers(self):
 
         for i in range(10):
-            if self.verifyElementPresence("_m3m1c", 0):
+            if self.verifyElementPresence("_56pd5", 0):
                 elem = self.driver.find_element_by_class_name("_m3m1c")
                 elem.click()
             else:

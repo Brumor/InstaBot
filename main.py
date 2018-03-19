@@ -7,8 +7,8 @@ Username henrychinqski1804
 Pass : bitcheZ1996
 
 TO-DO:
-    - Add emoji support
     ---> test for a day
+    ---> write documentation
 '''
 
 
