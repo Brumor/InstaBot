@@ -85,6 +85,7 @@ class EmojiFormat:
         for content in splitted:
             if content[0:2] == "e-":
                 self.addEmoji(content[2:])
+                self.elem.send_keys(Keys.SPACE)
             else:
                 self.elem.send_keys(content)
         self.elem.send_keys(Keys.SPACE)

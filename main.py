@@ -1,14 +1,21 @@
+# coding=utf-8
 from instabot import InstaBot
 from Tkinter import *
 import threading
+
+from unfollower import Unfollower
 
 '''
 Username henrychinqski1804
 Pass : bitcheZ1996
 
 TO-DO:
+    - Aller prendre les followers et likes sur les commentaires
+    - Voir si l'tuilisateur est actif
+    - Rajouter le code en fr
     ---> test for a day
     ---> write documentation
+    
 '''
 
 
@@ -48,13 +55,27 @@ def start():
         bot = InstaBot(usr, psswrd, trgt, fllw, lk, cmmnt,
                        cmmnt1, cmmnt2)
         bot.start()
+
+    def run_unfollow():
+        unfollowbot = Unfollower(usr, psswrd)
+        unfollowbot.start()
+
     threading.Thread(target=run_bot).start()
+
+    if fllw == True:
+        threading.Thread(target=run_unfollow).start()
+
+    return
+
 
 username.grid(row=0, column=1)
 password.grid(row=1, column=1)
 target_username.grid(row=2, column=1)
 comment1.grid(row=6, column=1)
 comment2.grid(row=7, column=1)
+
+username.insert(0, "henrychinqski1804")
+password.insert(0, "bitcheZ1996")
 
 Button(master, text='Start', command=start).grid(row=8, column=1, sticky=W)
 
