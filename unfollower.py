@@ -15,15 +15,15 @@ class Unfollower(object):
 
     def start(self):
         self.makeLog("Unfollower Bot launched ! ")
-        sleep(120)
+        sleep(2)
 
 
         while True:
             self.now = datetime.datetime.now()
 
-            userList = self.openFollowedTxt()
+            usrs = self.openFollowedTxt()
 
-            if(userList != None):
+            if(usrs != None):
                 self.driver = webdriver.Chrome()
                 self.login()
                 sleep(2)
@@ -32,16 +32,16 @@ class Unfollower(object):
                     self.makeLog("Couldn't Login ! Wrong Username/Password or weak connection.")
                     return
 
-                for i in range(0, len(userList)):
-                    self.unfollowUser(userList[i])
+                for i in range(0, len(usrs)):
+                    self.unfollowUser(usrs[i])
                     sleep(2)
 
                 fileToDelete = "followed/" + str(self.now.day) + '-' + self.username + '.txt'
                 os.remove(fileToDelete) # remove file
                 self.driver.close()
             else:
-                self.makeLog(" No Files ! Wating...")
-            sleep(360)
+                self.makeLog("Waiting for more files...")
+            sleep(43200)
 
     def login(self):
         self.makeLog("Log in...")
@@ -67,7 +67,7 @@ class Unfollower(object):
 
     def formateDateDifference(value, time):
         if value <= 0:
-            if time.month == 2 or time.month == 5 or time.month == 7 or time.month == 10 or time.month == 12:
+            if time.month == 5 or time.month == 7 or time.month == 10 or time.month == 12:
                 return 30 + value
             elif time.month == 3:
                 return 28 + value
@@ -80,42 +80,45 @@ class Unfollower(object):
         dir = 'followed/'
         files = os.listdir(dir)
 
+        usrs = None
+
         for i in files:
-            if i[0:2] == str(self.now.day - 0):
+            if i[0:2] == str(self.now.day - 2):
 
                 if i[3:-4] == self.username:
                     f = open(dir + i, 'r')
                     a = f.read()
                     f.close()
-                    userList = a.split(", ")
+                    usrs = a.split(", ")
 
                     # deletes the first blank space
-                    userList = userList[1:]
+                    usrs = usrs[1:]
                     break
 
-            elif i[0:1] == str(self.now.day - 0):
+            elif i[0:1] == str(self.now.day - 2):
                 if i[3:-4] == self.username:
                     f = open(dir + i, 'r')
                     a = f.read()
                     f.close()
 
-                    userList = a.split(", ")
+                    usrs = a.split(", ")
 
                     # deletes the first blank space
-                    userList = userList[1:]
+                    usrs = usrs[1:]
                     break
             else:
-                userList =  None
+                usrs =  None
 
-        self.makeLog(str(userList))
+        self.makeLog(str(usrs))
 
-        return userList
+        return usrs
 
     def makeLog(self, message):
         sys.stdout = open(self.logs + self.username + ".txt", "a")
         time = datetime.datetime.now()
-        print(str(time.day) + '/' + str(time.month) + '/' + str(time.year) + ', ' + str(time.hour)
-        + ':' + str(time.minute) + ':' + str(time.second) + " Unfollower = " + message.encode("utf-8"))
+        msg = str(time.day) + '/' + str(time.month) + '/' + str(time.year) + ', ' + str(time.hour) + ':' + str(
+            time.minute) + ':' + str(time.second) + " = " + message
+        print(bytes(msg.encode("utf-8")).decode("utf-8"))
         sys.stdout.close()
 
     def unfollowUser(self, user):

@@ -1,4 +1,3 @@
-import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from emoji_support import EmojiFormat
@@ -41,26 +40,9 @@ class InstaBot(object):
         self.driver.get("http://www.instagram.com/" + self.target_name)
         sleep(1)
 
-        #First round with followers
-        #usersList = self.getUsersFromFollowers()
-        #self.interactWithUsers(usersList)
+        usersList = self.getUsers()
 
-
-
-        # Goes to the competitor's page
-        #self.driver.get("http://www.instagram.com/" + self.target_name)
-        sleep(1)
-
-        pictureURLs = self.getPictureURLs()
-
-        for i in range(0, len(pictureURLs)):
-            self.getPicture(i, pictureURLs)
-
-            sleep(1)
-
-            usersList = self.getUsers()
-
-            self.interactWithUsers(usersList)
+        self.interactWithUsers(usersList)
 
     def login(self):
         self.makeLog("Log in...")
@@ -88,7 +70,7 @@ class InstaBot(object):
 
         self.makeLog("Opening picture number " + str(picture_to_get + 1))
         # Opens the first picture
-        self.driver.get(urls[picture_to_get - 1])
+        self.driver.get(urls[picture_to_get])
 
     def getPictureURLs(self):
         pictureUrls = []
@@ -107,15 +89,35 @@ class InstaBot(object):
     def getUsers(self):
         users = []
 
-        users1 = self.getUsersFromComments()
-        for i in users1:
+        # First round with followers
+        usersFollowed = self.getUsersFromFollowers()
+
+        for i in usersFollowed:
             users.append(i)
 
-        users2 = self.getUsersFromLikes()
-        for i in users2:
-            users.append(i)
+        pictureURLs = self.getPictureURLs()
 
-        self.makeLog("Collected users (" + str(len(users)) + ") = " + str(users))
+        # Second round with user liking and commenting on pictures
+        for i in range(0, len(pictureURLs)):
+            self.getPicture(i, pictureURLs)
+
+            sleep(1)
+
+            # Gets users from the comments under the picture
+            usersComments = self.getUsersFromComments()
+            for i in usersComments:
+                users.append(i)
+
+            # Gets users from the Likes under the picture
+            if (self.verifyElementPresence("_nzn1h", 3)):
+                usersLikes = self.getUsersFromLikes()
+                for i in usersLikes:
+                    users.append(i)
+
+        # Deletes users that appears more than once !
+        users = OrderedDict.fromkeys(users).keys()
+
+        self.makeLog("Collected users = " + str(len(users)))
 
         return users
 
@@ -136,9 +138,9 @@ class InstaBot(object):
             }
         '''
 
-        for i in range(0, 20):
+        for i in range(0, 23):
             self.driver.execute_script(js)
-            sleep(0.7)
+            sleep(1)
 
         List = self.driver.find_elements_by_class_name("_2nunc")
         users = []
@@ -146,16 +148,19 @@ class InstaBot(object):
             elem = i.find_element_by_tag_name("a")
             users.append(elem.get_attribute("title"))
 
-        sleep(20)
+        sleep(2)
+
+        self.makeLog("Collected users from likes = " + str(len(users)))
 
         return users
 
     def getUsersFromComments(self):
 
-        for i in range(100):
+        for i in range(20):
             if self.verifyElementPresence("_56pd5", 0):
                 js = "document.querySelector('._m3m1c').click(); "
                 self.driver.execute_script(js)
+                sleep(1)
             else:
                 break
 
@@ -171,8 +176,7 @@ class InstaBot(object):
         userToDelete = users[0]
         users = [x for x in users if x != userToDelete]
 
-        # Deletes users that appears more than once !
-        users = OrderedDict.fromkeys(users).keys()
+        self.makeLog("Collected users from comments = " + str(len(users)))
 
         return users
 
@@ -190,9 +194,9 @@ class InstaBot(object):
             a.scrollIntoView({block : "end"});
             
         '''
-        for i in range(0,20):
+        for i in range(0,23):
             self.driver.execute_script(js)
-            sleep(0.7)
+            sleep(1)
 
         List = self.driver.find_elements_by_class_name("_2nunc")
         users = []
@@ -200,9 +204,9 @@ class InstaBot(object):
             elem = i.find_element_by_tag_name("a")
             users.append(elem.get_attribute("title"))
 
-        self.makeLog("Collected users (" + str(len(users)) +") = " + str(users))
+        sleep(2)
 
-        sleep(20)
+        self.makeLog("Collected users from followers = " + str(len(users)))
 
         return users
 
@@ -218,7 +222,7 @@ class InstaBot(object):
             # Follow if the follow checkbox has been checked
             if self.isFollow:
                 self.makeFollow(user)
-                sleep(5)
+                sleep(600)
 
             if self.verifyElementPresence("_mck9w", 0):
 
@@ -246,7 +250,7 @@ class InstaBot(object):
                         self.makeComment(user, current_comment)
 
                         delete_count = delete_count + 1
-                sleep(45)
+                sleep(600)
 
         self.makeLog("Round finished !")
 
@@ -297,8 +301,8 @@ class InstaBot(object):
 
         sys.stdout = open("logs/" + self.username + ".txt", "a")
         time = datetime.datetime.now()
-        print(str(time.day) + '/' + str(time.month) + '/' + str(time.year) + ', ' + str(time.hour)
-              + ':' + str(time.minute) + ':' + str(time.second) + " = " + message.encode("utf-8"))
+        msg = str(time.day) + '/' + str(time.month) + '/' + str(time.year) + ', ' + str(time.hour) + ':' + str(time.minute) + ':' + str(time.second) + " = " + message
+        print(bytes(msg.encode("utf-8")).decode("utf-8"))
         sys.stdout.close()
 
     def makeComment(self, user, comment):

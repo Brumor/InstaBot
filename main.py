@@ -1,18 +1,13 @@
 # coding=utf-8
 from instabot import InstaBot
-from Tkinter import *
+from tkinter import *
 import threading
 
 from unfollower import Unfollower
 
 '''
-Username henrychinqski1804
-Pass : bitcheZ1996
 
 TO-DO:
-    - Aller prendre les followers et likes sur les commentaires
-    - Voir si l'tuilisateur est actif
-    - Rajouter le code en fr
     ---> test for a day
     ---> write documentation
     
@@ -74,8 +69,8 @@ target_username.grid(row=2, column=1)
 comment1.grid(row=6, column=1)
 comment2.grid(row=7, column=1)
 
-username.insert(0, "henrychinqski1804")
-password.insert(0, "bitcheZ1996")
+username.insert(0, "")
+password.insert(0, "")
 
 Button(master, text='Start', command=start).grid(row=8, column=1, sticky=W)
 

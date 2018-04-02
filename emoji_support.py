@@ -80,12 +80,10 @@ class EmojiFormat:
     def detectEmoji(self):
         message = self.message
 
-        splitted = message.split('/')
-
+        splitted = message.split(' ')
         for content in splitted:
-            if content[0:2] == "e-":
-                self.addEmoji(content[2:])
-                self.elem.send_keys(Keys.SPACE)
+            if content[0:3] == "/e-":
+                self.addEmoji(content[3:])
             else:
                 self.elem.send_keys(content)
-        self.elem.send_keys(Keys.SPACE)
+                self.elem.send_keys(Keys.SPACE)
