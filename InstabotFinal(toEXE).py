@@ -11,14 +11,6 @@ from selenium import webdriver
 from time import sleep
 import sys
 
-'''
-
-TO-DO:
-    ---> test for a day
-    ---> write documentation
-
-'''
-
 #see https://apps.timwhitlock.info/emoji/tables/unicode for a list of every emoji
 
 # Emoji Support D83D DC9C
