@@ -36,11 +36,26 @@ cat = u'\ud83d\udc31'
 eyes = u'\ud83d\udc40'
 crown = u'\ud83d\udc51'
 
+#JS To add Emojis
 JS_ADD_TEXT_TO_INPUT = """
   var elm = arguments[0], txt = arguments[1];
   elm.value += txt;
   elm.dispatchEvent(new Event('change'));
   """
+
+#Codes for button and HTML elements
+usernameElem = "username"
+passwordElem = "password"
+loginBtnElem = "_5f5mN"
+followersFrameJSElem = "._1xe_U"
+userElem = "FsskP"
+pictureElem = "v1Nh3"
+commentElem = "gElp9"
+loadCommentsElem = "vTJ4h"
+likesElem = "zV_Nj"
+likesButtonElem = "coreSpriteHeartOpen"
+followButtonElem = "_6VtSN"
+commentTextAreaElem = "Ypffh"
 
 class EmojiFormat:
     def __init__(self, message, elem, driver):
@@ -99,7 +114,6 @@ class EmojiFormat:
                 self.elem.send_keys(content)
                 self.elem.send_keys(Keys.SPACE)
 
-
 class InstaBot(object):
 
     def __init__(self, username, password, target_name, isFollow, isLike, isComment, comment1, comment2):
@@ -115,7 +129,7 @@ class InstaBot(object):
 
     def start(self):
 
-        sys.stdout = open("logs/" + self.username + ".txt", "a")
+        sys.stdout = open("logs/" + self.username + ".txt", "w")
         print("------------------------------------------------------------------------------------")
         sys.stdout.close()
 
@@ -144,19 +158,19 @@ class InstaBot(object):
         sleep(2)
 
         # enters login
-        elem = self.driver.find_element_by_name("username")
+        elem = self.driver.find_element_by_name(usernameElem)
         elem.clear()
         elem.send_keys(self.username)
 
         # enters password
-        elem = self.driver.find_element_by_name("password")
+        elem = self.driver.find_element_by_name(passwordElem)
         elem.clear()
         elem.send_keys(self.password)
 
         sleep(2)
 
         # Clicks the login button and waits fo the page to load
-        elem = self.driver.find_element_by_class_name("_gexxb")
+        elem = self.driver.find_element_by_class_name(loginBtnElem)
         elem.click()
 
     def getPicture(self, picture_to_get, urls):
@@ -169,7 +183,7 @@ class InstaBot(object):
         pictureUrls = []
 
         # Gets all visible pictures
-        pictures = self.driver.find_elements_by_class_name("_mck9w")
+        pictures = self.driver.find_elements_by_class_name(pictureElem)
 
         # Puts all picture's url in a list
         for picture in pictures:
@@ -202,7 +216,7 @@ class InstaBot(object):
                 users.append(i)
 
             # Gets users from the Likes under the picture
-            if (self.verifyElementPresence("_nzn1h", 3)):
+            if (self.verifyElementPresence(likesElem, 3)):
                 usersLikes = self.getUsersFromLikes()
                 for i in usersLikes:
                     users.append(i)
@@ -215,25 +229,24 @@ class InstaBot(object):
         return users
 
     def getUsersFromLikes(self):
-        js = '''
-            document.querySelector('._nzn1h').click();
-        '''
+        js = "document.querySelector('." +likesElem + "').click();"
+
 
         self.driver.execute_script(js)
         sleep(2)
 
         js = '''
-            a = document.querySelector('._p4iax');
+            a = document.querySelector(arguments[0]);
             if (a) {
                 a.scrollIntoView({block : "end"});
             }
         '''
 
-        for i in range(0, 23):
-            self.driver.execute_script(js)
+        for i in range(0, 4):
+            self.driver.execute_script(js, followersFrameJSElem)
             sleep(1)
 
-        List = self.driver.find_elements_by_class_name("_2nunc")
+        List = self.driver.find_elements_by_class_name(userElem)
         users = []
         for i in List:
             elem = i.find_element_by_tag_name("a")
@@ -246,15 +259,15 @@ class InstaBot(object):
     def getUsersFromComments(self):
 
         for i in range(20):
-            if self.verifyElementPresence("_56pd5", 0):
-                js = "document.querySelector('._m3m1c').click(); "
+            if self.verifyElementPresence(loadCommentsElem, 0):
+                js = "document.querySelector('." + loadCommentsElem + "').click();"
                 self.driver.execute_script(js)
                 sleep(1)
             else:
                 break
 
         # Takes every comment and returns a list of URLs and a list of usernames that redirects to active userpage.
-        List = self.driver.find_elements_by_class_name("_ezgzd")
+        List = self.driver.find_elements_by_class_name(commentElem)
 
         users = []
         for i in List:
@@ -277,15 +290,14 @@ class InstaBot(object):
         sleep(2)
 
         js = '''
-            a = document.querySelector('._8q670');
+            a = document.querySelector(arguments[0]);
             a.scrollIntoView({block : "end"});
-
         '''
-        for i in range(0, 23):
-            self.driver.execute_script(js)
+        for i in range(0, 4):
+            self.driver.execute_script(js, followersFrameJSElem)
             sleep(1)
 
-        List = self.driver.find_elements_by_class_name("_2nunc")
+        List = self.driver.find_elements_by_class_name(userElem)
         users = []
         for i in List:
             elem = i.find_element_by_tag_name("a")
@@ -306,14 +318,14 @@ class InstaBot(object):
             # Follow if the follow checkbox has been checked
             if self.isFollow:
                 self.makeFollow(user)
-                sleep(600)
+                sleep(5)
 
-            if self.verifyElementPresence("_mck9w", 0):
+            if self.verifyElementPresence(pictureElem, 0):
 
                 if self.isLike or self.isComment:
 
                     # Opens the first picture
-                    elem = self.driver.find_element_by_class_name("_mck9w").find_element_by_tag_name("a")
+                    elem = self.driver.find_element_by_class_name(pictureElem).find_element_by_tag_name("a")
                     self.driver.get(elem.get_attribute("href"))
 
                     elem = self.driver.find_element_by_tag_name("html")
@@ -334,7 +346,7 @@ class InstaBot(object):
                         self.makeComment(user, current_comment)
 
                         delete_count = delete_count + 1
-                sleep(600)
+                sleep(5)
 
     def restartWindow(self):
         self.driver.close()
@@ -396,7 +408,7 @@ class InstaBot(object):
             elem = self.driver.find_element_by_xpath(
                 '//*[@id="react-root"]/section/main/div/div/article/div[2]/section[3]/form/textarea')
             elem.click()
-            elem = self.driver.find_element_by_class_name("_bilrf")
+            elem = self.driver.find_element_by_class_name(commentTextAreaElem)
             elem.clear()
             self.textWithEmojiSupport(comment, elem)
             sleep(0.2)
@@ -407,16 +419,15 @@ class InstaBot(object):
 
     def makeLike(self, user):
 
-        if self.verifyElementPresence("/html/body/span/section/main/div/div/article/div[2]/section[1]/a[1]/span ",
-                                      1) == True:
-            js = "document.querySelector('._l9yih').click(); "
+        if self.verifyElementPresence("coreSpriteHeartOpen", 3) == True:
+            js = "document.querySelector('." + likesButtonElem +"').click(); "
             self.driver.execute_script(js)
             self.makeLog("Liked user's picture : " + user)
 
     def makeFollow(self, user):
 
-        if self.verifyElementPresence("_gexxb", 3) == True:
-            js = "document.querySelector('._gexxb').click(); "
+        if self.verifyElementPresence(followButtonElem, 3) == True:
+            js = "document.querySelector('." + followButtonElem + "').click(); "
             self.driver.execute_script(js)
 
             self.makeLog("Followed users : " + user)
@@ -429,10 +440,6 @@ class InstaBot(object):
     def textWithEmojiSupport(self, text, elem):
         emojisupp = EmojiFormat(text, elem, self.driver)
         emojisupp.detectEmoji()
-
-
-
-
 
 class Unfollower(object):
 
@@ -469,7 +476,7 @@ class Unfollower(object):
                 self.driver.close()
             else:
                 self.makeLog("Waiting for more files...")
-            sleep(43200)
+            sleep(300)
 
     def login(self):
         self.makeLog("Log in...")
@@ -478,19 +485,19 @@ class Unfollower(object):
         sleep(2)
 
         # enters login
-        elem = self.driver.find_element_by_name("username")
+        elem = self.driver.find_element_by_name(usernameElem)
         elem.clear()
         elem.send_keys(self.username)
 
         # enters password
-        elem = self.driver.find_element_by_name("password")
+        elem = self.driver.find_element_by_name(passwordElem)
         elem.clear()
         elem.send_keys(self.password)
 
         sleep(2)
 
         # Clicks the login button and waits fo the page to load
-        elem = self.driver.find_element_by_class_name("_gexxb")
+        elem = self.driver.find_element_by_class_name(loginBtnElem)
         elem.click()
 
     def formateDateDifference(value, time):
@@ -511,7 +518,7 @@ class Unfollower(object):
         usrs = None
 
         for i in files:
-            if i[0:2] == str(self.now.day - 2):
+            if i[0:2] == str(self.now.day):
 
                 if i[3:-4] == self.username:
                     f = open(dir + i, 'r')
@@ -523,7 +530,7 @@ class Unfollower(object):
                     usrs = usrs[1:]
                     break
 
-            elif i[0:1] == str(self.now.day - 2):
+            elif i[0:1] == str(self.now.day):
                 if i[3:-4] == self.username:
                     f = open(dir + i, 'r')
                     a = f.read()
@@ -550,14 +557,13 @@ class Unfollower(object):
         sys.stdout.close()
 
     def unfollowUser(self, user):
-        #_qv64e
 
         self.driver.get("http://www.instagram.com/" + user)
 
-        if self.verifyElementPresence("_t78yp", 3):
+        if self.verifyElementPresence(followButtonElem, 3):
             self.makeLog(user)
 
-            js = "document.querySelector('._t78yp').click(); "
+            js = "document.querySelector('."+ followButtonElem + "').click(); "
             self.driver.execute_script(js)
 
     def verifyElementPresence(self, var_name, type_research):
